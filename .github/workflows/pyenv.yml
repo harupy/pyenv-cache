@@ -41,5 +41,8 @@ jobs:
           pyenv --version
       - name: Build
         run: |
-          pyenv install 3.8.13
           pyenv install 3.8.12
+      - uses: actions/upload-artifact@v3
+        with:
+          name: pyenv
+          path: /home/runner/.pyenv
