@@ -31,13 +31,15 @@ jobs:
         run: |
           git clone --depth 1 https://github.com/pyenv/pyenv.git "$HOME/.pyenv"
       - name: Setup environment variables
-        shell: bash
         run: |
           PYENV_ROOT="$HOME/.pyenv"
           PYENV_BIN="$PYENV_ROOT/bin"
           echo "$PYENV_BIN" >> $GITHUB_PATH
           echo "PYENV_ROOT=$PYENV_ROOT" >> $GITHUB_ENV
       - name: Check pyenv version
-        shell: bash
         run: |
           pyenv --version
+      - name: Build
+        run: |
+          pyenv install 3.8.13
+          pyenv install 3.8.12
