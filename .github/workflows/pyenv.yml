@@ -1,0 +1,48 @@
+name: pyenv
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - branch-[0-9]+.[0-9]+
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -exo pipefail {0}
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      ########## Ubuntu ##########
+      - name: Install python build tools
+        # Ref: https://github.com/pyenv/pyenv/wiki#suggested-build-environment
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y make build-essential libssl-dev zlib1g-dev \
+          libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm \
+          libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
+      - name: Install pyenv
+        run: |
+          git clone --depth 1 https://github.com/pyenv/pyenv.git "$HOME/.pyenv"
+      - name: Setup environment variables
+        run: |
+          PYENV_ROOT="$HOME/.pyenv"
+          PYENV_BIN="$PYENV_ROOT/bin"
+          echo "$PYENV_BIN" >> $GITHUB_PATH
+          echo "PYENV_ROOT=$PYENV_ROOT" >> $GITHUB_ENV
+      - name: Check pyenv version
+        run: |
+          pyenv --version
+      - name: Build
+        run: |
+          pyenv install 3.8.12
+      - uses: actions/upload-artifact@v3
+        with:
+          name: pyenv
+          path: /home/runner/.pyenv
